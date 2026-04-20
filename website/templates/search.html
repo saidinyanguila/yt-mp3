@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YT Downloader</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .status {
+            position: relative;
+            background: conic-gradient(#fa0000 75%, transparent 25%);
+            animation: loadingRotate 3s linear infinite;
+        }
+        .status::after {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        @keyframes loadingRotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(359deg);
+            }
+        }
+
+        @keyframes loading {
+            0% {
+                transform: scaleX(0);
+                transform-origin: left;
+            }
+            50% {
+                transform: scaleX(1);
+                transform-origin: left;
+            }
+            51% {
+                transform-origin: right;
+            }
+            100% {
+                transform: scaleX(0);
+                transform-origin: right;
+            }
+        }
+    </style>
+    <script>
+        function formatTime(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+
+            // Pad with '0' to ensure two digits
+            const paddedMinutes = String(minutes).padStart(2, '0');
+            const paddedSeconds = String(seconds).padStart(2, '0');
+
+            return `${paddedMinutes}:${paddedSeconds}`;
+        }
+    </script>
+</head>
+<body>
+    <main class="min-h-screen bg-[#eaeaea]">
+        <div className="container mx-auto px-6" id="container">
+            <div class="bg-[#191919] px-3 py-6">
+                <nav class="w-full flex items-center justify-center gap-[2rem] px-[10px]">
+                    <a class="text-[#fafafa] hover:text-[#fa0000]" href="/">Home</a>
+                    <a class="text-[#fafafa] hover:text-[#fa0000]" href="/about">About</a>
+                    <a class="text-[#fafafa] hover:text-[#fa0000]" href="/donate">Donate</a>
+                    <a class="text-[#fafafa] hover:text-[#fa0000]" href="/how-to-use">Help</a>
+                </nav>
+
+                <a href="/" class="block text-white text-center text-5xl mt-[3rem] mb-[2rem]">YT Downloader</a>
+
+                <div class="block mt-[50px] mx-auto max-w-[500px]">
+                    <div class="relative mt-4 mb-6">
+                        <form id="query_form">
+                            <input id="yt_query" name="yt_query" value="{{ query }}" placeholder="Search Youtube" type="text" class="flex bg-[#fafafa] h-12 w-full rounded-sm border-0 outline-0 bg-background pl-3 pr-15 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground md:text-sm"/>
+                            <button type="submit" class="bg-[#fa0000] text-[#fafafa] rounded-tr-sm rounded-br-sm absolute right-0 top-0 h-full aspect-square px-2 flex items-center justify-center cursor-pointer" id="search_btn">
+                                <i data-lucide="search"></i> 
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative">
+                <div class="absolute hidden bg-[#adadad] left-0 bottom-0 w-full h-[3px] overflow-hidden" id="loading-bar">
+                    <div class="bg-[#fa0000] w-full h-full origin-left" style="animation: loading 1.5s ease-in-out infinite;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container max-w-175 mx-auto px-2 py-5">
+            <p class="text-xl font-light text-center mb-6">Search Results:</p>
+
+            <div class="flex flex-col gap-4 mb-5" id="search_results">
+                {% for res in results %}
+                    <div class="search_result_item flex items-center gap-8 bg-white rounded-md shadow-ms w-full py-4 px-2 cursor-pointer">
+                        <div class="bg-white rounded-md shadow-ms w-full py-4 px-2 cursor-pointer">
+                            <div class="flex items-center justify-between pr-1 ">
+                                <div class="flex items-center gap-8">
+                                    <p class="bg-[#fa0000] px-2 py-1 h-7 rounded-sm text-white text-[11px]">{{ res[3] }}</p>
+
+                                    <div class="flex flex-col justify-center">
+                                        <p class="text-[19px] font-light">{{ res[1] }}</p>
+                                        <p class="text-[15px] font-bold">{{ res[2] }}</p>
+                                    </div>
+                                </div>
+                                
+                                <button class="bg-[#fa0000] p-2 rounded-sm text-white cursor-pointer">
+                                    <i data-lucide="download"></i> 
+                                </button>
+                            </div>
+                                
+                            <div class="search_result_info scale-y-0 hidden mt-3 pt-5 border-t border-[#cccccc]">
+                                <!-- Search -->
+                                <div class="w-full block">
+                                    <input value="{{ res[4] }}" class="bg-[#fafafacc] w-full h-[45px] py-2 px-2 border border-black rounded-sm" type="text" id="search-bar" autocomplete="off" placeholder="Search for song info">
+                                    <div id="search-results"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
+    <script src="/static/js/index.js"></script>
+</body>
+</html>

@@ -47,6 +47,15 @@ def search():
             "results" : results
         })
 
+@views.route("/search_tags", methods=['POST'])
+def search_tags():
+    query = request.json.get("q")
+
+    url = f"https://api.deezer.com/search/track?q={query}"
+    res = requests.get(url)
+
+    return jsonify(res.json())
+
 @views.route("/download", methods=['POST'])
 def download():
     video_id = request.json.get("video_id")
@@ -113,11 +122,14 @@ def download_video(video_id, title, artist, album, cover):
                 try:
                     os.rename(("website/static/downloads/" + file), clean_title("website/static/downloads/" + file))
                 except FileNotFoundError:
-                    print(f"Error: The file '{file}' was not found.")
+                    pass
+                    # print(f"Error: The file '{file}' was not found.")
                 except FileExistsError:
-                    print(f"Error: The destination file '{file}' already exists.")
+                    pass
+                    # print(f"Error: The destination file '{file}' already exists.")
                 except Exception as e:
-                    print(f"An unexpected error occurred while renaming the file '{file}' : {e}")
+                    pass
+                    # print(f"An unexpected error occurred while renaming the file '{file}' : {e}")
 
                 path = (clean_title(info["title"] + ".mp3"))
             

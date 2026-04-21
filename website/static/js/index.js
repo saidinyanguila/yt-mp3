@@ -96,7 +96,13 @@ function render_results(results) {
                 return;
             }
                 
-            fetch(`https://corsproxy.io/?https://api.deezer.com/search/track?q=${text}`)
+            fetch("/search_tags", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    q: text,
+                })
+            })
             .then(res => res.json())
             .then(data => {
                 const searchResults = element.querySelector("#search-results");
